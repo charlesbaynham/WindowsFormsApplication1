@@ -12,7 +12,7 @@ using BotSuite;
 using BotSuite.ImageLibrary;
 using BotSuite.Recognition.Character;
 
-namespace WindowsFormsApplication1
+namespace BotTest
 {
     public partial class Form1 : Form
     {
@@ -75,93 +75,113 @@ namespace WindowsFormsApplication1
         private void showLetterFloats(string letter, OCR MyOCR)
         { showLetterFloats(new ImageData(letter), MyOCR); }
 
+
+        
+
         private void button2_Click(object sender, EventArgs e)
         {
-            Directory.SetCurrentDirectory("letters");
-            string[] letters = Directory.GetDirectories(".");
+            //Directory.SetCurrentDirectory("letters");
+            //string[] letters = Directory.GetDirectories(".");
 
-            Console.WriteLine(letters[1]);
+            //Console.WriteLine(letters[1]);
 
-            for (int i = 0; i < letters.GetLength(0); i++ )
-            {
-                letters[i] = letters[i].Remove(0, 2);
-            }
+            //for (int i = 0; i < letters.GetLength(0); i++ )
+            //{
+            //    letters[i] = letters[i].Remove(0, 2);
+            //}
 
-            OCR MyOCR = InitNetwork();
+/////
+            //Dictionary<Char, List<ImageData>> ImageTraining = new Dictionary<Char, List<ImageData>> { };
 
-            ImageData letterImg = new ImageData("b\\letterB.bmp");
+            //List<ImageData> ImagesForA = new List<ImageData> { };
+            //List<ImageData> ImagesForB = new List<ImageData> { };
 
-            //showLetterFloats("a\\letterA.bmp", MyOCR);
-            //showLetterFloats("a\\a2.bmp", MyOCR);
-            //showLetterFloats("b\\letterB.bmp", MyOCR);
-            //showLetterFloats("b\\b2.bmp", MyOCR);
 
-            char result = MyOCR.Recognize(letterImg);
+            //string[] dirs = Directory.GetFiles(@"a");
+            //foreach (string dir in dirs)
+            //{
+            //    Bitmap tmpBmp = new Bitmap(dir);
+            //    ImageData tmpImg = new ImageData(tmpBmp);
+            //    ImagesForA.Add(tmpImg);
 
-            //float[] erg = MyOCR.GetAnswer(ImgTmp);    // try to recognise
-            //MessageBox.Show(string.Join(" ", erg));   // show the result
+            //}
+            //ImageTraining.Add('a', ImagesForA);
 
-            Console.WriteLine("Output should be \"A\". It is: " + result);
+            //string[] dirs2 = Directory.GetFiles(@"b");
+            //foreach (string dir in dirs2)
+            //{
+            //    ImageData tmpImg;
+            //    Bitmap tmpBmp = new Bitmap(dir);
+            //    tmpImg = new ImageData(tmpBmp);
+            //    ImagesForB.Add(tmpImg);
 
-            string[] dirs = Directory.GetFiles(@"a");
-            foreach (string dir in dirs)
+            //}
+            //ImageTraining.Add('b', ImagesForB);
+
+            ////
+
+            Dictionary<char, string> test = new Dictionary<char, string> { };
+            test.Add('a', "letters\\a");
+            test.Add('b', "letters\\b");
+
+            //CharRecogniser recog = new CharRecogniser(ImageTraining);
+            CharRecogniser recog = new CharRecogniser(test);
+
+            string[] dirs3 = Directory.GetFiles(@"letters\\a");
+            foreach (string dir in dirs3)
             {
                 Bitmap tmpBmp = new Bitmap(dir);
                 ImageData tmpImg = new ImageData(tmpBmp);
 
-                Console.WriteLine("File " + dir + " gives \"" + MyOCR.Recognize(tmpImg) + "\"");
+                Console.WriteLine("File " + dir + " gives \"" + recog.RecogniseLetter(tmpImg) + "\"");
             }
-
-            string[] dirs2 = Directory.GetFiles(@"b");
-            foreach (string dir in dirs2)
+            string[] dirs4 = Directory.GetFiles(@"letters\\b");
+            foreach (string dir in dirs4)
             {
                 Bitmap tmpBmp = new Bitmap(dir);
                 ImageData tmpImg = new ImageData(tmpBmp);
 
-                Console.WriteLine("File " + dir + " gives \"" + MyOCR.Recognize(tmpImg) + "\"");
+                Console.WriteLine("File " + dir + " gives \"" + recog.RecogniseLetter(tmpImg) + "\"");
             }
+
+            ////
+
+            //ImageData letterImg = new ImageData("b\\letterB.bmp");
+
+            ////showLetterFloats("a\\letterA.bmp", MyOCR);
+            ////showLetterFloats("a\\a2.bmp", MyOCR);
+            ////showLetterFloats("b\\letterB.bmp", MyOCR);
+            ////showLetterFloats("b\\b2.bmp", MyOCR);
+
+            //char result = MyOCR.Recognize(letterImg);
+
+            ////float[] erg = MyOCR.GetAnswer(ImgTmp);    // try to recognise
+            ////MessageBox.Show(string.Join(" ", erg));   // show the result
+
+            //Console.WriteLine("Output should be \"A\". It is: " + result);
+
+            //string[] dirs3 = Directory.GetFiles(@"a");
+            //foreach (string dir in dirs3)
+            //{
+            //    Bitmap tmpBmp = new Bitmap(dir);
+            //    ImageData tmpImg = new ImageData(tmpBmp);
+
+            //    Console.WriteLine("File " + dir + " gives \"" + MyOCR.Recognize(tmpImg) + "\"");
+            //}
+
+            //string[] dirs4 = Directory.GetFiles(@"b");
+            //foreach (string dir in dirs4)
+            //{
+            //    Bitmap tmpBmp = new Bitmap(dir);
+            //    ImageData tmpImg = new ImageData(tmpBmp);
+
+            //    Console.WriteLine("File " + dir + " gives \"" + MyOCR.Recognize(tmpImg) + "\"");
+            //}
             
         }
 
 
-        class CharRecogniser
-        {
-
-
-            private OCR InitNetwork()
-            {
-                Dictionary<Char, List<ImageData>> ImageTraining = new Dictionary<Char, List<ImageData>> { };
-                List<ImageData> ImagesForA = new List<ImageData> { };
-                List<ImageData> ImagesForB = new List<ImageData> { };
-
-                string[] dirs = Directory.GetFiles(@"a");
-                foreach (string dir in dirs)
-                {
-                    Bitmap tmpBmp = new Bitmap(dir);
-                    ImageData tmpImg = new ImageData(tmpBmp);
-                    ImagesForA.Add(tmpImg);
-
-                }
-                ImageTraining.Add('a', ImagesForA);
-
-                string[] dirs2 = Directory.GetFiles(@"b");
-                foreach (string dir in dirs2)
-                {
-                    ImageData tmpImg;
-                    Bitmap tmpBmp = new Bitmap(dir);
-                    tmpImg = new ImageData(tmpBmp);
-                    ImagesForB.Add(tmpImg);
-
-                }
-                ImageTraining.Add('b', ImagesForB);
-
-                OCR MyOCR = new OCR(30);
-                MyOCR.StartTrainingSession(ImageTraining);
-                //MyOCR.RandomTrain(50000);
-
-                return MyOCR;
-            }
-        }
+        
 
     }
 

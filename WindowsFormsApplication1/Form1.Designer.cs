@@ -1,4 +1,4 @@
-﻿namespace WindowsFormsApplication1
+﻿namespace BotTest
 {
     partial class Form1
     {
