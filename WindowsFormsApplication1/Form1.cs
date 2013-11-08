@@ -17,7 +17,8 @@ namespace BotTest
 {
     public partial class Form1 : Form
     {
-        CharRecogniser recog;
+        //CharRecogniser recog;
+        
 
         public Form1()
         {
@@ -70,14 +71,19 @@ namespace BotTest
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            recog = new CharRecogniser("letters");
+            //recog = new CharRecogniser("letters");
             
         }
 
 
         private void button2_Click(object sender, EventArgs e)
         {
-            lblOutput.Text = "String is : " + recog.RecogniseString(new ImageData("string.bmp"));
+            using (var recog = new TessOCRforEVE())
+            {
+                //lblOutput.Text = "String is : " + recog.RecogniseString(new ImageData("string.bmp"));
+                lblOutput2.Text = "String is : " + recog.RecogniseString(new ImageData("string.bmp"));
+                
+            }
         }
 
         private void btnRelearn_Click(object sender, EventArgs e)

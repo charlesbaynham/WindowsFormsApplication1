@@ -16,26 +16,18 @@ namespace BotTest
     /// <summary>
     ///     Class to recognise characters and strings from BMP images.
     /// </summary>
-    class TessOCRforEVE
+    class TessOCRforEVE : IDisposable
     {
         TesseractEngine engine;
 
-        /// <summary>
-        /// Initiate the OCR engine with english data files (to be located in a "tessdata" dir,
-        /// next to the .exe
-        /// </summary>
-        public TessOCRforEVE() { var engine = new TesseractEngine(@"./tessdata", "eng", EngineMode.Default); }
+        public void Dispose() { engine.Dispose(); }
 
         /// <summary>
-        /// Convert an image to black and white
+        /// Initiate the Tesseract OCR engine with english datafiles
         /// </summary>
-        /// <param name="input">ImageData object to be converted</param>
-        /// <returns></returns>
-        ImageData toBlackAndWhite(ImageData input)
-        {
-            Filter.BlackAndWhite(ref input, 50);
-            return input;
-        }
+        /// <param name="dir">Path to datafiles directory (default = "./tessdata")</param>
+        /// <param name="lang">Language (default = "eng")</param>
+        public TessOCRforEVE(string dir=@"./tessdata", string lang="eng") { engine = new TesseractEngine(dir, lang, EngineMode.Default); }
 
         /// <summary>
         ///     Recognise a bmp string of letters and output the result
@@ -44,21 +36,29 @@ namespace BotTest
         /// <returns></returns>
         public string RecogniseString(ImageData letters)
         {
-            // Convert to B&W:
-            letters = toBlackAndWhite(letters);
-
+            
+            // Boost resolution
+            letters = letters.Resize(10,System.Drawing.Drawing2D.InterpolationMode.HighQualityBilinear);
+            CropImage(letters).Save("boosted.bmp");
+            
             // Invert colours
             Filter.Invert(ref letters);
+            letters.Save("inverted.bmp");
 
-            // Boost resolution
-            Filter.rescale(ref letters, 10);
+            // to Black and white
+            //Filter.BlackAndWhite(ref letters, 130);
+            //letters.Save("BW.bmp");
+            
+            Filter.Sharpen(ref letters, 1000);
 
             // debug
             letters.Save("string-for-recognition.bmp");
 
-            Pix img = BitmapToPixConverter.Convert(letters.CreateBitmap());
-
-            return output;
+            using (var page = engine.Process(letters.CreateBitmap()))
+            {
+                var output = page.GetText();
+                return output;
+            }
         }
         /// <summary>
         ///     Recognise a bmp string of letters and output the result
