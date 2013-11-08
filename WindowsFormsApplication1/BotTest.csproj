@@ -53,6 +53,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TessOCRforEVE.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -86,6 +87,10 @@
     <ProjectReference Include="..\..\..\..\GitHub\BotSuite\BotSuite\BotSuite.csproj">
       <Project>{998e32c7-3b12-43eb-b149-9cefbbf1c9f3}</Project>
       <Name>BotSuite</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\GitHub\tesseract\Tesseract.Net45\Tesseract.Net45.csproj">
+      <Project>{1868cac0-d64c-4092-9108-59d562321056}</Project>
+      <Name>Tesseract.Net45</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

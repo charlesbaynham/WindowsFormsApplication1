@@ -31,6 +31,7 @@
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.lblOutput = new System.Windows.Forms.Label();
+            this.btnRelearn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button1
@@ -62,11 +63,22 @@
             this.lblOutput.TabIndex = 2;
             this.lblOutput.Text = "Click OCR";
             // 
+            // btnRelearn
+            // 
+            this.btnRelearn.Location = new System.Drawing.Point(144, 36);
+            this.btnRelearn.Name = "btnRelearn";
+            this.btnRelearn.Size = new System.Drawing.Size(75, 23);
+            this.btnRelearn.TabIndex = 3;
+            this.btnRelearn.Text = "Relearn";
+            this.btnRelearn.UseVisualStyleBackColor = true;
+            this.btnRelearn.Click += new System.EventHandler(this.btnRelearn_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(392, 293);
+            this.Controls.Add(this.btnRelearn);
             this.Controls.Add(this.lblOutput);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
@@ -83,6 +95,7 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Label lblOutput;
+        private System.Windows.Forms.Button btnRelearn;
     }
 }
 

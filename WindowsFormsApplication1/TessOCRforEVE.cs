@@ -9,158 +9,22 @@ using System.Drawing;
 using BotSuite.ImageLibrary;
 using BotSuite.Recognition.Character;
 
+using Tesseract;
+
 namespace BotTest
 {
     /// <summary>
     ///     Class to recognise characters and strings from BMP images.
     /// </summary>
-    class CharRecogniser
+    class TessOCRforEVE
     {
-        OCR MyOCR;
+        TesseractEngine engine;
 
         /// <summary>
-        ///     Initialises CharRecogniser with images to learn. These WILL NOT be automatically converted to BW and/or
-        ///     cropped, so must have been prepared already. 
-        ///     Note that this cannot be added to later,
-        ///     so the whole configuration must be discarded to add more letters in after initialisation. 
+        /// Initiate the OCR engine with english data files (to be located in a "tessdata" dir,
+        /// next to the .exe
         /// </summary>
-        /// <param name="ImageTraining">Dictionary of char -> list(ImageData) to be learnt.</param>
-        public CharRecogniser(Dictionary<Char, List<ImageData>> ImageTraining)
-        {
-            init(ImageTraining);
-        }
-        /// <summary>
-        ///     Initialises CharRecogniser with images to learn. Folder contains bitmap images to be learnt
-        ///     as letters. These will be converted to BW and cropped automatically
-        ///     Note that this cannot be added to later,
-        ///     so the whole configuration must be discarded to add more letters in after initialisation. 
-        /// </summary>
-        /// <param name="ImageTraining">Dictionary of char -> folder of images.</param>
-        public CharRecogniser(Dictionary<Char, string> ImageTraining)
-        {
-            init(ImageTraining);
-        }
-        /// <summary>
-        ///     Initialises CharRecogniser with images to learn. Folder contains bitmap images to be learnt
-        ///     as letters. These will be converted to BW and cropped automatically
-        ///     Note that this cannot be added to later,
-        ///     so the whole configuration must be discarded to add more letters in after initialisation. 
-        /// </summary>
-        /// <param name="ImageTraining">Directory containing subdirectories a-z which contain examples of their
-        /// respective letters.</param>
-        public CharRecogniser(string dir)
-        {
-            init(dir);
-        }
-        
-        /// <summary>
-        /// Function to get around the lack of chaining constructors in c
-        /// </summary>
-        /// <param name="ImageTraining">Images to be trained as a dict of char -> list(Images)</param>
-        void init(Dictionary<Char, List<ImageData>> ImageTraining)
-        {
-            MyOCR = new OCR(30);
-            MyOCR.StartTrainingSession(ImageTraining);
-        }
-        /// <summary>
-        /// Function to get around the lack of chaining constructors in c
-        /// </summary>
-        /// <param name="ImageTraining">Images to be trained as a dict of dirnames</param>
-        void init(Dictionary<Char, string> ImageTraining)
-        {
-            Dictionary<Char, List<ImageData>> finalTraining = new Dictionary<char, List<ImageData>> { };
-            Random rand = new Random();
-            foreach (char key in ImageTraining.Keys)
-            {
-                List<ImageData> tmpList = new List<ImageData> { };
-
-                string[] images = Directory.GetFiles(ImageTraining[key], "*.bmp");
-
-                for (int i = 0; i < images.GetLength(0); i++)
-                {
-                    ImageData tmpImg = new ImageData(images[i]);
-
-                    tmpImg = toBlackAndWhite(tmpImg);
-                    Filter.Invert(ref tmpImg);
-                    tmpImg = CropImage(tmpImg);
-                    Filter.rescale(ref tmpImg, 5);
-
-                    tmpImg.Save("learntimages\\" + rand.Next(999) + ".bmp");
-
-                    tmpList.Add(tmpImg);
-
-                    Console.WriteLine(key + ": adding: " + images[i]);
-                }
-
-                finalTraining.Add(key, tmpList);
-            }
-
-            init(finalTraining);
-        }
-        /// <summary>
-        /// Function to get around the lack of chaining constructors in c
-        /// </summary>
-        /// <param name="ImageTraining">Parent directory of images to be trained</param>
-        void init(string dir)
-        {
-            // Build a char -> string dict for use in the prev constructor
-            Dictionary<Char, string> imageDict = new Dictionary<char, string> { };
-
-            string oldDir = Directory.GetCurrentDirectory();
-            Directory.SetCurrentDirectory(dir);
-
-            string[] letterDirs = Directory.GetDirectories(".");
-
-            for (int i = 0; i < letterDirs.GetLength(0); i++)
-            {
-                letterDirs[i] = letterDirs[i].Remove(0, 2);
-
-                // Only pay attention to directories with single-letter names:
-                if (letterDirs[i].Length == 1)
-                {
-                    imageDict.Add(letterDirs[i].First(), dir + "/" + letterDirs[i].First());
-                }
-            }
-
-            Directory.SetCurrentDirectory(oldDir);
-
-            init(imageDict);
-        }
-
-        /// <summary>
-        ///     Recognise a single letter   
-        /// </summary>
-        /// <param name="letter">ImageData of the letter image to be recognised.</param>
-        /// <returns></returns>
-        public char RecogniseLetter(ImageData letter)
-        {
-            letter = toBlackAndWhite(letter);
-
-            letter = CropImage(letter);
-
-            //debug
-            new Random().Next(100);
-            letter.Save("croppedLetter" + new Random().Next(100) + ".bmp");
-
-            float[] sticks = MyOCR.GetNetworkOutput(MyOCR.GetMagicSticksPattern(letter));
-            foreach (float stick in sticks)
-                Console.Write(stick + " ");
-            Console.WriteLine();
-            
-            return MyOCR.Recognize(letter);
-        }
-        /// <summary>
-        ///     Recognise a single letter   
-        /// </summary>
-        /// <param name="letter">Bitmap of the letter image to be recognised.</param>
-        /// <returns></returns>
-        public char RecogniseLetter(Bitmap letter) { return RecogniseLetter(new ImageData(letter)); }
-        /// <summary>
-        ///     Recognise a single letter   
-        /// </summary>
-        /// <param name="letter">Path to the bitmap letter image to be recognised.</param>
-        /// <returns></returns>
-        public char RecogniseLetter(string letter) { return RecogniseLetter(new ImageData(letter)); }
+        public TessOCRforEVE() { var engine = new TesseractEngine(@"./tessdata", "eng", EngineMode.Default); }
 
         /// <summary>
         /// Convert an image to black and white
@@ -183,30 +47,16 @@ namespace BotTest
             // Convert to B&W:
             letters = toBlackAndWhite(letters);
 
-            //invert colours
+            // Invert colours
             Filter.Invert(ref letters);
 
-            ////boost res
-            //Filter.rescale(ref letters, 5);
+            // Boost resolution
+            Filter.rescale(ref letters, 10);
 
             // debug
-            letters.Save("string-BW.bmp");
+            letters.Save("string-for-recognition.bmp");
 
-            // Split:
-            List<ImageData> splitLetters = SplitString(letters);
-
-            // Recognise letters:
-            string output = "";
-            foreach (ImageData letter in splitLetters)
-            {
-                ImageData thisLetter = CropImage(letter);
-                Filter.rescale(ref thisLetter, 5);
-
-                //debug
-                thisLetter.Save("abouttorecog.bmp");
-
-                output += RecogniseLetter(thisLetter);
-            }
+            Pix img = BitmapToPixConverter.Convert(letters.CreateBitmap());
 
             return output;
         }
@@ -222,12 +72,13 @@ namespace BotTest
         /// </summary>
         /// <param name="input">Imagedata object of image to be cropped</param>
         /// <returns></returns>
-        ImageData CropImage(ImageData input){
+        ImageData CropImage(ImageData input)
+        {
 
             /* --------------- divide letters -------------------------------------------- */
             // column which can  be a separator --> we can draw a vertical line without hitting a letter
-            
-            int top = 0, height = input.Height, left=0, width=input.Width;
+
+            int top = 0, height = input.Height, left = 0, width = input.Width;
 
             //debug
             input.Save("cropin.bmp");
@@ -253,7 +104,7 @@ namespace BotTest
                 if (found) break;
             }
             // test from right to left
-            for (Int32 column = input.Width-1; column >= 0; column--)
+            for (Int32 column = input.Width - 1; column >= 0; column--)
             {
                 bool found = false;
                 // test from top to bottom
@@ -296,7 +147,7 @@ namespace BotTest
                 if (found) break;
             }
             // test from bottom to top
-            for (Int32 row = input.Height-1; row >= 0; row--)
+            for (Int32 row = input.Height - 1; row >= 0; row--)
             {
                 // test from left to right
                 bool found = false;
@@ -313,7 +164,7 @@ namespace BotTest
                         break;
                     }
                 }
-                if (found) break; 
+                if (found) break;
             }
 
             return new ImageData(input.CreateBitmap(left, top, width, height));
@@ -396,7 +247,7 @@ namespace BotTest
                         if (width > 1)
                         {
                             ImageData tmpLetter = new ImageData(letters.CreateBitmap(left, 0, width, letters.Height - 3));
-//                            output.Add(new ImageData(letters.CreateBitmap(left, 0, width, letters.Height - 3)));
+                            //                            output.Add(new ImageData(letters.CreateBitmap(left, 0, width, letters.Height - 3)));
 
                             output.Add(tmpLetter);
                             //tmpLetter.Save("splitting.bmp");

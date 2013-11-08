@@ -12,6 +12,7 @@ using BotSuite;
 using BotSuite.ImageLibrary;
 using BotSuite.Recognition.Character;
 
+
 namespace BotTest
 {
     public partial class Form1 : Form
@@ -43,7 +44,7 @@ namespace BotTest
             //Mouse.Move(this.Left, this.Top + 400, true, 200);
 
             OCR recog = new OCR();
-
+            
             recog.Recognize(new ImageData("letterC.bmp"));
 
             System.Console.WriteLine("We think it's:  " + recog.Recognize(new ImageData("letterC.bmp")));
@@ -69,30 +70,9 @@ namespace BotTest
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            Dictionary<char, string> letterDict = new Dictionary<char, string> { };
-            letterDict.Add('a', "letters\\a");
-            letterDict.Add('b', "letters\\b");
-
-            recog = new CharRecogniser(letterDict);
+            recog = new CharRecogniser("letters");
+            
         }
-
-        /// <summary>
-        ///     Pops up a debug box with the magic sticks analysis of the given image
-        /// </summary>
-        /// <param name="letter">The image</param>
-        /// <param name="MyOCR">The OCR object</param>
-        private void showLetterFloats(ImageData letter, OCR MyOCR)
-        {
-            float[] test = MyOCR.GetMagicSticksPattern(letter);  // To see whats going on
-            MessageBox.Show(string.Join(" ", test));  // show the results from the magic sticks
-        }
-        /// <summary>
-        ///     Pops up a debug box with the magic sticks analysis of the given image
-        /// </summary>
-        /// <param name="letter">The path to the image</param>
-        /// <param name="MyOCR">The OCR object</param>
-        private void showLetterFloats(string letter, OCR MyOCR)
-        { showLetterFloats(new ImageData(letter), MyOCR); }
 
 
         private void button2_Click(object sender, EventArgs e)
@@ -100,5 +80,11 @@ namespace BotTest
             lblOutput.Text = "String is : " + recog.RecogniseString(new ImageData("string.bmp"));
         }
 
+        private void btnRelearn_Click(object sender, EventArgs e)
+        {
+            Form1_Load(sender, e);
+        }
+
+        
     }
 }
