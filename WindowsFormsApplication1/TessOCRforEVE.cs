@@ -33,26 +33,29 @@ namespace BotTest
         ///     Recognise a bmp string of letters and output the result
         /// </summary>
         /// <param name="letters">ImageData object of string</param>
+        /// <param name="multiple">Multiple by which to scale up the image</param>
         /// <returns></returns>
-        public string RecogniseString(ImageData letters)
+        public string RecogniseString(ImageData letters, int multiple = 5)
         {
-            
+
+            // to Black and white
+            //Filter.BlackAndWhite(ref letters, 85);
+            //letters.Save("BW.bmp");
+
             // Boost resolution
-            letters = letters.Resize(10,System.Drawing.Drawing2D.InterpolationMode.HighQualityBilinear);
+            letters = letters.Resize(multiple, System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic);
             CropImage(letters).Save("boosted.bmp");
             
             // Invert colours
             Filter.Invert(ref letters);
             letters.Save("inverted.bmp");
-
-            // to Black and white
-            //Filter.BlackAndWhite(ref letters, 130);
-            //letters.Save("BW.bmp");
             
             Filter.Sharpen(ref letters, 1000);
 
             // debug
             letters.Save("string-for-recognition.bmp");
+            //engine.SetVariable("VAR_CHAR_WHITELIST", "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmopqrstuvwxyz0123456789%,");
+            engine.SetVariable("tessedit_char_whitelist", "0123456789,.ISK");
 
             using (var page = engine.Process(letters.CreateBitmap()))
             {

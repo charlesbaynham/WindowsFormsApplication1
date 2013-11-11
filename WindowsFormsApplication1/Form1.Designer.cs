@@ -33,8 +33,8 @@
             this.lblOutput = new System.Windows.Forms.Label();
             this.btnRelearn = new System.Windows.Forms.Button();
             this.lblOutput2 = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.boxMult = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // button1
@@ -85,20 +85,30 @@
             this.lblOutput2.TabIndex = 4;
             this.lblOutput2.Text = "Click OCR";
             // 
-            // pictureBox1
+            // boxMult
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(186, 139);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(100, 50);
-            this.pictureBox1.TabIndex = 5;
-            this.pictureBox1.TabStop = false;
+            this.boxMult.Location = new System.Drawing.Point(211, 97);
+            this.boxMult.Name = "boxMult";
+            this.boxMult.Size = new System.Drawing.Size(100, 20);
+            this.boxMult.TabIndex = 5;
+            this.boxMult.Text = "5";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(127, 100);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(78, 13);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Multiple res up:";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(392, 293);
-            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.boxMult);
             this.Controls.Add(this.lblOutput2);
             this.Controls.Add(this.btnRelearn);
             this.Controls.Add(this.lblOutput);
@@ -107,7 +117,6 @@
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -120,7 +129,8 @@
         private System.Windows.Forms.Label lblOutput;
         private System.Windows.Forms.Button btnRelearn;
         private System.Windows.Forms.Label lblOutput2;
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.TextBox boxMult;
+        private System.Windows.Forms.Label label1;
     }
 }
 
